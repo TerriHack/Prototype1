@@ -7,22 +7,31 @@ using UnityEngine.InputSystem;
 public class PlayerInputManager : MonoBehaviour
 {
     [SerializeField] private PlayerController playerController;
+    [SerializeField] private MouseLook mouseLook;
     
     private PlayerInputs controls;
     private PlayerInputs.GroundMovementActions groundMovement;
 
     private Vector2 horizontalInput;
+    private Vector2 mouseInput;
+
+    private bool isAttacking;
     private void Awake()
     {
         controls = new PlayerInputs();
         groundMovement = controls.GroundMovement;
 
         groundMovement.HorizontalMovement.performed += ctx => horizontalInput = ctx.ReadValue<Vector2>();
+        groundMovement.MouseX.performed += ctx => mouseInput.x = ctx.ReadValue<float>();
+        groundMovement.MouseY.performed += ctx => mouseInput.y = ctx.ReadValue<float>();
+        groundMovement.Attack.performed += ctx => isAttacking = ctx.ReadValue<bool>();
     }
 
     private void Update()
     {
-        playerController.ReceiveInput(horizontalInput);
+        playerController.ReceiveInput(horizontalInput, isAttacking);
+        
+        mouseLook.ReceiveInput(mouseInput);
     }
 
     private void OnEnable()
@@ -30,7 +39,7 @@ public class PlayerInputManager : MonoBehaviour
         controls.Enable();
     }
     
-    private void OnDisnable()
+    private void OnDisable()
     {
         controls.Disable();
     }
