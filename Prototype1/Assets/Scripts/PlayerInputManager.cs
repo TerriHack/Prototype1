@@ -24,7 +24,6 @@ public class PlayerInputManager : MonoBehaviour
         groundMovement.HorizontalMovement.performed += ctx => horizontalInput = ctx.ReadValue<Vector2>();
         groundMovement.MouseX.performed += ctx => mouseInput.x = ctx.ReadValue<float>();
         groundMovement.MouseY.performed += ctx => mouseInput.y = ctx.ReadValue<float>();
-        groundMovement.Attack.performed += ctx => isAttacking = ctx.ReadValue<bool>();
     }
 
     private void Update()
@@ -32,6 +31,8 @@ public class PlayerInputManager : MonoBehaviour
         playerController.ReceiveInput(horizontalInput, isAttacking);
         
         mouseLook.ReceiveInput(mouseInput);
+        
+        isAttacking = groundMovement.Attack.triggered;
     }
 
     private void OnEnable()
